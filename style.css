@@ -1,0 +1,189 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  background-color: #fff;
+  color: #333;
+  padding-top: 72px;
+}
+
+/* 固定 navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Hero 區塊 */
+.hero {
+  background: url('images/sky.jpg') center/cover no-repeat;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+.hero-content h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+.hero-content p {
+  font-size: 20px;
+}
+
+/* 區塊樣式 */
+.section {
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.works .work-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+.work-item img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.work-item img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.about-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+}
+.about-photo {
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.about-text {
+  max-width: 600px;
+  text-align: left;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #333;
+  color: white;
+  border-radius: 25px;
+  margin-top: 20px;
+  text-decoration: none;
+}
+
+footer {
+  background: #f5f5f5;
+  text-align: center;
+  padding: 40px 0;
+  font-size: 14px;
+  color: #777;
+}
+
+/* 動畫效果 */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 手機及小螢幕版調整 */
+@media screen and (max-width: 600px) {
+  .hero-content h1 {
+    font-size: 2.4rem;  /* 由48px降到約38px */
+    margin-bottom: 6px;
+    padding: 0 10px;
+  }
+  .hero-content p {
+    font-size: 1.2rem;  /* 由20px降到約19px */
+    padding: 0 10px;
+  }
+  .navbar {
+    padding: 15px 20px; /* 導覽列邊距變小，適合手機 */
+  }
+  .nav-links {
+    gap: 15px;          /* 導覽列選項間距縮小 */
+  }
+  .logo {
+    font-size: 18px;    /* Logo字體稍微縮小 */
+  }
+  /* about-container改成垂直排列更適合手機 */
+  .about-container {
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 20px;
+  }
+  .about-photo {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  .about-text {
+    max-width: 100%;
+    font-size: 16px;
+    text-align: center;
+  }
+  .section {
+    padding: 40px 20px;
+  }
+}
