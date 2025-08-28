@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>終極密碼小遊戲</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:,">
+</head>
+<body>
+  <div class="game-container">
+    <h1>終極密碼小遊戲 🎯</h1>
+    <p id="rangeText">請猜一個 1 到 100 之間的數字：</p>
+    <input type="number" id="guessInput" placeholder="輸入你的猜測" />
+    <div class="buttons">
+      <button id="guessBtn">猜！</button>
+      <button id="restartBtn" style="display:none;">重新開始</button>
+    </div>
+    <p id="message"></p>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
