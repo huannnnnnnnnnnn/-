@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>聯絡我 - Echo</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .contact-section {
+        background-image: 
+            radial-gradient(circle at top left, #fbc2eb8e, #a6c0ee75),  /* 紫粉漸層 */
+         url('star.png');  /* 小星星圖 */
+            background-blend-mode: screen; /* 讓星星浮現又保留漸層 */
+         background-size: cover;
+         background-repeat: no-repeat;
+         background-position: center;
+         min-height: 100vh;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding: 60px 20px;
+         color: #fff; /* 文字用白色較清爽 */
+}
+
+
+
+    .contact-card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(15px);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      animation: fadeInUp 1s ease;
+    }
+
+    .contact-card h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #333;
+    }
+
+    .contact-card form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .contact-card input,
+    .contact-card textarea {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: inherit;
+    }
+
+    .contact-card textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .contact-card button {
+      padding: 12px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .contact-card button:hover {
+      background-color: #555;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero parallax" data-speed="0.3">
+    <nav class="navbar">
+      <div class="logo">Echo's Portfolio</div>
+      <ul class="nav-links">
+        <li><a href="index.html">回首頁</a></li>
+        <li><a href="works.html">作品</a></li>
+        <li><a href="contact.html">聯絡</a></li>
+      </ul>
+    </nav>
+    <div class="hero-content">
+      <h1>聯絡我</h1>
+      <p>一起交流創意、談合作吧！</p>
+    </div>
+  </header>
+
+  <section class="contact-section fade-in">
+    <div class="contact-card">
+      <h2>留下你的訊息</h2>
+      <form action="mailto:allpass80061@gmail.com" method="POST" enctype="text/plain">
+        <input type="text" name="name" placeholder="你的姓名" required />
+        <input type="email" name="email" placeholder="你的Email" required />
+        <textarea name="message" placeholder="想對我說的話..." required></textarea>
+        <button type="submit">送出訊息</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Echo S. All rights reserved.</p>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
