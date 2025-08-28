@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>To Do List</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+<body>
+  <!-- 登入按鈕區塊 -->
+  <div id="login-container" style="text-align:center; margin-top:100px;">
+    <button id="login-btn">使用 Google 登入</button>
+  </div>
+
+  <!-- 登入後待辦清單區塊，預設隱藏 -->
+  <div class="container" id="app-container" style="display:none;">
+    <button id="logout-btn">登出</button>
+
+    <h1>📅 待辦清單</h1>
+
+    <div class="date-picker">
+      <label for="date-select">選擇日期：</label>
+      <input type="date" id="date-select" />
+    </div>
+
+    <h2 id="current-date-title"></h2>
+
+    <div class="input-group">
+      <input type="text" id="todo-input" placeholder="輸入待辦事項" />
+      <button id="add-btn">新增</button>
+    </div>
+
+    <ul id="todo-list"></ul>
+
+    <div id="counter">尚有 <span id="count">0</span> 項未完成</div>
+  </div>
+
+<script>
+  // ======= Firebase 初始化 =======
+  const firebaseConfig = {
+    apiKey: "AIzaSyBaY3yJ2f_YiRG-NItSmROpILa8NfBXzgE",
+    authDomain: "date-251d9.firebaseapp.com",
+    projectId: "date-251d9",
+    storageBucket: "date-251d9.firebasestorage.app",
+    messagingSenderId: "134417666337",
+    appId: "1:134417666337:web:96bb4367fd6e7ecb2fee60",
+    measurementId: "G-MKJ1L8JV7C"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const loginBtn = document.getElementById("login-btn");
+  const logoutBtn = document.getElementById("logout-btn");
+  const loginContainer = document.getElementById("login-container");
+  const appContainer = document.getElementById("app-container");
+
+  let userId = null;
+
+  // 監聽登入狀態改變
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userId = user.uid;
+      loginContainer.style.display = "none";
+      appContainer.style.display = "block";
+      selectedDate = getTodayString();
+      dateInput.value = selectedDate;
+      updateDateDisplay();
+      loadTodos(selectedDate);
+    } else {
+      userId = null;
+      loginContainer.style.display = "block";
+      appContainer.style.display = "none";
+    }
+  });
+
+  // Google 登入
+  loginBtn.addEventListener("click", () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(console.error);
+  });
+
+  // 登出
+  logoutBtn.addEventListener("click", () => {
+    auth.signOut();
+  });
+
+  // ======= 介面元件 =======
+  const dateInput = document.getElementById("date-select");
+  const currentDateTitle = document.getElementById("current-date-title");
+  const addBtn = document.getElementById("add-btn");
+  const todoInput = document.getElementById("todo-input");
+  const todoList = document.getElementById("todo-list");
+  const countDisplay = document.getElementById("count");
+
+  let selectedDate = getTodayString();
+
+  dateInput.addEventListener("change", () => {
+    selectedDate = dateInput.value;
+    updateDateDisplay();
+    loadTodos(selectedDate);
+  });
+
+  addBtn.addEventListener("click", addTodo);
+  todoInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") addTodo();
+  });
+
+  let todos = [];
+
+  // 新增待辦事項
+  function addTodo() {
+    const text = todoInput.value.trim();
+    if (!text || !userId) return;
+
+    const newTodo = {
+      text,
+      completed: false,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    db.collection("users")
+      .doc(userId)
+      .collection("todos")
+      .doc(selectedDate)
+      .collection("items")
+      .add(newTodo)
+      .then(() => {
+        todoInput.value = "";
+        loadTodos(selectedDate);
+      })
+      .catch(console.error);
+  }
+
+  // 載入指定日期待辦事項
+  function loadTodos(date) {
+    if (!userId) return;
+
+    db.collection("users")
+      .doc(userId)
+      .collection("todos")
+      .doc(date)
+      .collection("items")
+      .orderBy("createdAt", "asc")
+      .get()
+      .then((querySnapshot) => {
+        todos = [];
+        querySnapshot.forEach((doc) => {
+          todos.push({ id: doc.id, ...doc.data() });
+        });
+        renderList();
+      })
+      .catch(console.error);
+  }
+
+  // 渲染清單到畫面
+  function renderList() {
+    todoList.innerHTML = "";
+
+    const incomplete = todos.filter((t) => !t.completed);
+    const complete = todos.filter((t) => t.completed);
+    const sorted = [...incomplete, ...complete];
+
+    sorted.forEach((todo) => {
+      const li = document.createElement("li");
+      if (todo.completed) li.classList.add("completed");
+
+      const span = document.createElement("span");
+      span.textContent = todo.text;
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "刪除";
+      deleteBtn.className = "delete-btn";
+
+      deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteTodo(todo.id);
+      });
+
+      li.addEventListener("click", () => {
+        toggleComplete(todo.id, !todo.completed);
+      });
+
+      li.appendChild(span);
+      li.appendChild(deleteBtn);
+      todoList.appendChild(li);
+    });
+
+    countDisplay.textContent = incomplete.length;
+  }
+
+  // 刪除待辦
+  function deleteTodo(id) {
+    if (!userId) return;
+
+    db.collection("users")
+      .doc(userId)
+      .collection("todos")
+      .doc(selectedDate)
+      .collection("items")
+      .doc(id)
+      .delete()
+      .then(() => {
+        loadTodos(selectedDate);
+      })
+      .catch(console.error);
+  }
+
+  // 切換完成狀態
+  function toggleComplete(id, completed) {
+    if (!userId) return;
+
+    db.collection("users")
+      .doc(userId)
+      .collection("todos")
+      .doc(selectedDate)
+      .collection("items")
+      .doc(id)
+      .update({ completed })
+      .then(() => {
+        loadTodos(selectedDate);
+      })
+      .catch(console.error);
+  }
+
+  function updateDateDisplay() {
+    currentDateTitle.textContent = `📌 ${selectedDate} 的待辦事項`;
+  }
+
+  function getTodayString() {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  }
+</script>
+</body>
+</html>
